@@ -7,11 +7,11 @@ public class Predicate {
     private List<Predicate> predicates;
     private boolean neg;
 
-    public Predicate(String name) {
+    public Predicate(String name, boolean neg) {
         this.name = name;
         atributes = new ArrayList<>();
         predicates = new ArrayList<>();
-        neg = false;
+        this.neg = neg;
     }
 
     public Predicate(String name, List<Atribute> atributes) {
@@ -19,8 +19,12 @@ public class Predicate {
         this.atributes = atributes;
     }
 
-    public void add(Atribute a){
+    public void addAtribute(Atribute a){
         atributes.add(a);
+    }
+
+    public void addPredicate(Predicate a){
+        predicates.add(a);
     }
 
     public void negation(){
@@ -37,5 +41,21 @@ public class Predicate {
 
     public List<Atribute> getAtributes(){
         return atributes;
+    }
+
+    public boolean getNeg(){
+        return neg;
+    }
+
+    public String toString(){
+        String string = "";
+        if (neg) string = "negovane ";
+
+        string = name + "(";
+        for (Atribute a : atributes){
+            string = string + a.getName() + ", ";
+        }
+        string = string + ")";
+        return string;
     }
 }

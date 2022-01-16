@@ -4,7 +4,7 @@ public class Parser {
     private String string;
     private char[] line;
     private HashSet<String> tables;
-    private String predicate;
+    //  private Predicate newPredicate;
     private int i;
     private HashSet<Character> chars; //povolene znaky
 
@@ -28,12 +28,24 @@ public class Parser {
 
     }
 
-    //doplnit podciarkniky a negaciu, chybaju podmienky na koniec retazca
-
+    //doplnit podciarkniky, chybaju podmienky na koniec retazca
+    //zmenit na private
     public Predicate readPredicate(){
         spaces();
         StringBuilder sb = new StringBuilder();
         Predicate result = null;
+        boolean neg = false;
+
+        if (line[i] == '\\'){
+            i++;
+            spaces();
+            if (line[i] == '+'){
+               i++;
+               neg = true;
+               spaces();
+            }
+            else return null;
+        }
 
         while (i < line.length && chars.contains(line[i])){
             sb.append(line[i]);
@@ -44,7 +56,7 @@ public class Parser {
         if (line[i] != '(') return null;
 
         i++;
-        result = new Predicate(sb.toString());
+        result = new Predicate(sb.toString(), neg);
         spaces();
 
         boolean prve = false;
@@ -57,20 +69,67 @@ public class Parser {
                 spaces();
             }
 
-            if ((int) line[i] < 65 || (int) line[i] > 90) return null;
+            if (line[i] == '\''){
+                i++;
+                StringBuilder tmp = new StringBuilder();
+                while((int) line[i] != '\''){
+                   tmp.append(line[i]);
+                   i++;
+                }
+                result.addAtribute(new Atribute(tmp.toString()));
+                i++;
+            }
+            else if (line[i] != '_' && ((int) line[i] < 65 || (int) line[i] > 90)) return null;
 
-            result.add(new Atribute(line[i]));
-            i++;
+            else {
+                result.addAtribute(new Atribute(line[i]));
+                i++;
+            }
             spaces();
             prve = true;
 
         }
+        i++;
+        spaces();
 
         return result;
     }
 
-    public void parse(){
+    public Predicate parse(){
+        spaces();
+        Predicate result = readPredicate();
+        if (result == null) return null;
 
+        if (line[i] == ':'){
+            i++;
+            spaces();
+            if (line[i] == '-'){
+                i++;
+                spaces();
+            }
+            else return null;
+        }
+        boolean prve = false;
+        while(i < line.length && line[i] != '.'){
+            spaces();
+
+            if (prve) {
+                if (line[i] != ',') return null;
+                i++;
+                spaces();
+            }
+
+            //zatial bez porovnavani a rovna sa
+
+            Predicate tmp = readPredicate();
+            if (tmp == null) return null;
+            result.addPredicate(tmp);
+            prve = true;
+
+
+        }
+
+        return result;
     }
 
 
