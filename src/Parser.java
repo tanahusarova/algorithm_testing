@@ -1,12 +1,17 @@
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 public class Parser {
     private String string;
     private char[] line;
     private HashSet<String> tables;
     private int i;
-    private HashSet<Character> chars; //povolene znaky
+    private HashSet<Character> charPred;
+    private HashSet<Character> charAtrib;
 
     public Parser(String string, HashSet<String> tables) {
         this.string = string;
@@ -14,12 +19,20 @@ public class Parser {
         line = string.toCharArray();
         i = 0;
 
-        //domysliet na male pismena, _, -
-        chars = new HashSet<>(){{
-            add('a');
-            add('b');
-            add('c');
+        charPred = new HashSet<>(){{
+            add('_');
+            add('-');
         }};
+
+        charAtrib = new HashSet<>();
+
+        for (int i = 65; i <= 90; i++){
+            charAtrib.add((char) i);
+            charPred.add((char) i);
+            charAtrib.add((char) (i + 32));
+            charPred.add((char) (i + 32));
+        }
+
     }
 
     private void spaces(){
@@ -43,43 +56,49 @@ public class Parser {
         return Optional.of(false);
     }
 
-    //doplnit podciarkniky, chybaju podmienky na koniec retazca
-    //zmenit na private
-    public Predicate readPredicate(){
-        spaces();
+    private String readName(HashSet<Character> chars){
+
         StringBuilder sb = new StringBuilder();
-        Predicate result = null;
+        while (i < line.length && chars.contains(line[i])){
+            sb.append(line[i]);
+            i++;
+        }
+        return sb.toString();
+    }
+
+    //chybaju podmienky na koniec retazca
+    //zmenit na private
+
+    private Component readNext(){
+        spaces();
+      //  Component result = null;
         boolean neg;
         Optional<Boolean> tmpO = negation();
 
         if (tmpO.isEmpty()) return null;
         neg = tmpO.get();
 
+        if (line[i] >= 97 && line[i] <= 122)
+            return readPredicate(neg, false);
 
-        /*
-        if (line[i] == '\\'){
-            i++;
-            spaces();
-            if (line[i] == '+'){
-               i++;
-               neg = true;
-               spaces();
-            }
-            else return null;
-        }
+        if (line[i] >= 65 && line[i] <= 90)
+            return readCondition(neg);
 
-         */
+        return null;
 
-        while (i < line.length && chars.contains(line[i])){
-            sb.append(line[i]);
-            i++;
-        }
+    }
+
+    public Predicate readPredicate(boolean neg, boolean newP){
+        Predicate result = null;
+
+        String name = readName(charPred);
+
         spaces();
 
         if (line[i] != '(') return null;
 
         i++;
-        result = new Predicate(sb.toString(), neg);
+        result = new Predicate(name, neg);
 
         spaces();
 
@@ -103,11 +122,13 @@ public class Parser {
                 result.addAtribute(new Atribute(tmp.toString()));
                 i++;
             }
-            else if (line[i] != '_' && ((int) line[i] < 65 || (int) line[i] > 90)) return null;
-
-            else {
+            else if (line[i] == '_' && !newP) {
                 result.addAtribute(new Atribute(line[i]));
                 i++;
+            }
+            else if ((int) line[i] < 65 || (int) line[i] > 90 || line[i] == '_') return null;
+            else {
+                result.addAtribute(new Atribute(readName(charAtrib)));
             }
             spaces();
             prve = true;
@@ -119,9 +140,21 @@ public class Parser {
         return result;
     }
 
+    //doplnit
+    private Condition readCondition(boolean neg){
+        String a1;
+        if (charAtrib.contains(line[i])) {
+            a1 = readName(charAtrib);
+
+        }
+
+
+        return null;
+    }
+
     public Predicate parseLine(){
         spaces();
-        Predicate result = readPredicate();
+        Predicate result = readPredicate(false, true);
         if (result == null) return null;
 
         if (line[i] == ':'){
@@ -143,15 +176,16 @@ public class Parser {
                 spaces();
             }
 
-            //zatial bez porovnavani a rovna sa
-
-            Predicate tmp = readPredicate();
+            Component tmp = readNext();
 
             //overovanie ci sa predikat nachadza v databaze ako tabulka
-            if (tmp == null && !tables.contains(tmp.getName())) return null;
-            result.addPredicate(tmp);
-            prve = true;
+            if ((tmp instanceof Predicate && !tables.contains(((Predicate) tmp).getName()))
+                    || tmp == null) return null;
 
+            if (tmp instanceof Predicate) result.addPredicate((Predicate) tmp);
+            else result.addConditions((Condition) tmp);
+
+            prve = true;
 
         }
 
@@ -160,8 +194,19 @@ public class Parser {
         return result;
     }
 
-    public Predicate parse() {
-        return null;
+
+    public List<Predicate> parse() {
+        List<Predicate> result = new ArrayList<>();
+
+        while(i < line.length){
+            Predicate tmp = parseLine();
+            spaces();
+            if (line[i] < 97 || line[i] > 122) return null;
+            result.add(tmp);
+        }
+
+        return result;
 
     }
+
     }

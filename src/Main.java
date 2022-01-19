@@ -4,9 +4,7 @@ public class Main {
         Parser pz = new Parser(" *kk (P, A)", null);
         Parser pz2 = new Parser(" \\ + aab (M, K) ", null);
 
-        Predicate p1 = p.parse();
-        Predicate p2 = pz.readPredicate();
-        Predicate p3 = pz2.readPredicate();
+        Predicate p1 = new Predicate("lalala", true);
 
         if (p1 != null) {
             if (p1.getNeg()) System.out.println("Negovane");

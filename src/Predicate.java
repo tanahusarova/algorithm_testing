@@ -1,16 +1,18 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Predicate {
+public class Predicate implements Component{
     private String name;
     private List<Atribute> atributes;
     private List<Predicate> predicates;
+    private List<Condition> conditions;
     private boolean neg;
 
     public Predicate(String name, boolean neg) {
         this.name = name;
         atributes = new ArrayList<>();
         predicates = new ArrayList<>();
+        conditions = new ArrayList<>();
         this.neg = neg;
     }
 
@@ -57,5 +59,10 @@ public class Predicate {
         }
         string = string + ")";
         return string;
+    }
+
+
+    public void addConditions(Condition c) {
+        this.conditions.add(c);
     }
 }
