@@ -12,8 +12,10 @@ public class Main {
             if (p1.getNeg()) System.out.println("Negovane");
             System.out.println(p1.toString() + ":");
 
-            for (Predicate r : p1.getPredicates())
+            for (Predicate r : p1.getPredicates()) {
+           //     if (r.getNeg()) System.out.println("Negovane");
                 System.out.println(r.toString());
+            }
 
         }
         else System.out.println("je null");

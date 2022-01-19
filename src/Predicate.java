@@ -49,7 +49,7 @@ public class Predicate {
 
     public String toString(){
         String string = "";
-        if (neg) string = "negovane ";
+        if (neg == true) string = string + "negovane ";
 
         string = name + "(";
         for (Atribute a : atributes){
