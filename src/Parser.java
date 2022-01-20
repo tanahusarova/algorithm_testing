@@ -86,7 +86,7 @@ public class Parser {
     }
 
     public Predicate readPredicate(boolean neg, boolean newP){
-        Predicate result = null;
+        Predicate result;
 
         String name = readName(charPred);
 
@@ -137,7 +137,7 @@ public class Parser {
         return result;
     }
 
-    //doplnit
+    //doplnit, domysliet condition
     private Condition readCondition(boolean neg){
         String a1;
         if (charAtrib.contains(line[i])) {
@@ -175,9 +175,7 @@ public class Parser {
 
             Component tmp = readNext();
 
-            //overovanie ci sa predikat nachadza v databaze ako tabulka
-            if ((tmp instanceof Predicate && !tables.contains(((Predicate) tmp).getName()))
-                    || tmp == null) return null;
+            if (tmp == null) return null;
 
             if (tmp instanceof Predicate) result.addPredicate((Predicate) tmp);
             else result.addConditions((Condition) tmp);

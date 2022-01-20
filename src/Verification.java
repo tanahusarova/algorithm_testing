@@ -3,8 +3,13 @@ import java.util.HashSet;
 
 public class Verification {
     private Predicate p;
+    private HashSet<String> tables;
 
-    public Verification(Predicate p) {
+    public Verification(HashSet<String> tables) {
+        this.tables = tables;
+    }
+
+    public void setP(Predicate p) {
         this.p = p;
     }
 
@@ -27,6 +32,9 @@ public class Verification {
 
         for (Predicate predicate : p.getPredicates()){
             Boolean neg = predicate.getNeg();
+            if (!predicate.checkNeg() || !tables.contains(predicate.getName())) return false;
+
+            //toto asi nebude dobre, verifikacia je nastavena len na hlavny predikat, treba domysliet
 
             for (Atribute a : predicate.getAtributes()) {
 

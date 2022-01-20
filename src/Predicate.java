@@ -15,8 +15,12 @@ public class Predicate implements Component{
         predicates = new ArrayList<>();
         conditions = new ArrayList<>();
         this.neg = neg;
-        v = new Verification(this);
 
+    }
+
+    public void verificate(Verification v) {
+        this.v = v;
+        v.setP(this);
     }
 
     public Predicate(String name, List<Atribute> atributes) {
@@ -62,15 +66,21 @@ public class Predicate implements Component{
 
     public String toString(){
 
-        String string = "";
-        if (neg) string = "negovane ";
+        StringBuilder sb = new StringBuilder();
 
-        string = name + "(";
+        if (neg) sb.append("negovane "); //zistit preco nejde
+
+        sb.append(name + "(");
+        boolean tmp = false;
+
         for (Atribute a : atributes){
-            string = string + a.getName() + ", ";
+            if (tmp) sb.append(", ");
+            sb.append(a.getName());
+            tmp = true;
         }
-        string = string + ")";
-        return string;
+
+        sb.append(")");
+        return sb.toString();
     }
 
     public boolean checkNeg(){
