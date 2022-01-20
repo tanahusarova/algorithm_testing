@@ -77,7 +77,7 @@ public class Predicate implements Component{
         return v.checkNeg();
     }
 
-    public boolean checkWhole() throws NotSafeRule {
+    public boolean checkWhole() {
         return v.checkNotRecursive() && v.checkSafety();
     }
 

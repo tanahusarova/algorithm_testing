@@ -17,7 +17,7 @@ public class Verification {
         return true;
     }
 
-    public boolean checkSafety() throws NotSafeRule {
+    public boolean checkSafety(){
         HashSet<String> positive = new HashSet<>();
         HashMap<String, Integer> numOsOccurr = new HashMap<>();
 
@@ -38,14 +38,15 @@ public class Verification {
                 if (!neg)
                     positive.add(a.getName());
                 else {
-                    if (!positive.contains(a.getName())) throw new NotSafeRule();
+                    if (!positive.contains(a.getName())) return false;
+                    //atribut negovaneho predikatu nieje predtym v pozitivnom vyzname
                 }
             }
 
         }
 
         for (Atribute a : p.getAtributes()){
-            if (numOsOccurr.get(a.getName()) == 0) throw new NotSafeRule();
+            if (numOsOccurr.get(a.getName()) == 0) return false; //atributy predikatu su neohranicene
         }
 
         // doupravovat podla parsera a podla condition
@@ -70,7 +71,7 @@ public class Verification {
         }
 
         for (String s : numOsOccurr.keySet()){
-            if (numOsOccurr.get(s) == 0) throw new NotSafeRule();
+            if (numOsOccurr.get(s) == 0) return false; //nejaka premenna sa objavuje len raz
         }
 
         return true;
