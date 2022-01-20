@@ -13,5 +13,19 @@ public class Condition implements Component{
         string = s;
     }
 
+    public boolean isNeg() {
+        return neg;
+    }
 
+    public Atribute getA1() {
+        return a1;
+    }
+
+    public Atribute getA2() {
+        return a2;
+    }
+
+    public String getString() {
+        return string;
+    }
 }

@@ -7,6 +7,7 @@ public class Predicate implements Component{
     private List<Predicate> predicates;
     private List<Condition> conditions;
     private boolean neg;
+    private Verification v;
 
     public Predicate(String name, boolean neg) {
         this.name = name;
@@ -14,6 +15,8 @@ public class Predicate implements Component{
         predicates = new ArrayList<>();
         conditions = new ArrayList<>();
         this.neg = neg;
+        v = new Verification(this);
+
     }
 
     public Predicate(String name, List<Atribute> atributes) {
@@ -29,12 +32,12 @@ public class Predicate implements Component{
         predicates.add(a);
     }
 
-    public void negation(){
-        neg = true;
+    public void addConditions(Condition c) {
+        this.conditions.add(c);
     }
 
-    public List<Predicate> getPredicates() {
-        return predicates;
+    public void negation(){
+        neg = true;
     }
 
     public String getName(){
@@ -45,13 +48,22 @@ public class Predicate implements Component{
         return atributes;
     }
 
+    public List<Predicate> getPredicates() {
+        return predicates;
+    }
+
+    public List<Condition> getConditions(){
+        return conditions;
+    }
+
     public boolean getNeg(){
         return neg;
     }
 
     public String toString(){
+
         String string = "";
-        if (neg == true) string = string + "negovane ";
+        if (neg) string = "negovane ";
 
         string = name + "(";
         for (Atribute a : atributes){
@@ -61,8 +73,13 @@ public class Predicate implements Component{
         return string;
     }
 
-
-    public void addConditions(Condition c) {
-        this.conditions.add(c);
+    public boolean checkNeg(){
+        return v.checkNeg();
     }
+
+    public boolean checkWhole() throws NotSafeRule {
+        return v.checkNotRecursive() && v.checkSafety();
+    }
+
+
 }

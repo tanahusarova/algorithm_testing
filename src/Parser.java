@@ -3,10 +3,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 public class Parser {
-    private String string;
     private char[] line;
     private HashSet<String> tables;
     private int i;
@@ -14,7 +12,6 @@ public class Parser {
     private HashSet<Character> charAtrib;
 
     public Parser(String string, HashSet<String> tables) {
-        this.string = string;
         this.tables = tables;
         line = string.toCharArray();
         i = 0;
