@@ -112,6 +112,8 @@ public class SQL {
             }
         }
 
+         //doriesit not exists
+
         select.append(from.toString());
         select.append(where.toString());
         select.append(";");
