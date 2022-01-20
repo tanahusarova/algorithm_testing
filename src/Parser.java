@@ -11,8 +11,7 @@ public class Parser {
     private HashSet<Character> charPred;
     private HashSet<Character> charAtrib;
 
-    public Parser(String string, HashSet<String> tables) {
-        this.tables = tables;
+    public Parser(String string) {
         line = string.toCharArray();
         i = 0;
 
