@@ -92,4 +92,19 @@ public class Predicate implements Component{
     }
 
 
+    public boolean containsA(Atribute a){
+        for (Atribute atribute : atributes)
+            if (atribute.getName().equals(a.getName())) return true;
+
+        return false;
+    }
+
+    public int indexOf(Atribute a){
+        for (int i = 0; i < atributes.size(); i++){
+            if (a.getName().equals(atributes.get(i).getName())) return i;
+        }
+        return -1;
+    }
+
+
 }

@@ -13,8 +13,6 @@ public class Table {
         return name;
     }
 
-    //cislovane od jednotky
-
     public String getColumn(int i){
         if (i < atributes.size() && i >= 0)
             return atributes.get(i);

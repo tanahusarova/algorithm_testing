@@ -28,4 +28,9 @@ public class Condition implements Component{
     public String getString() {
         return string;
     }
+
+    //dorobit
+    public String toString(){
+        return null;
+    }
 }

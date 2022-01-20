@@ -38,12 +38,12 @@ public class SQL {
             iS = 1;
             if (tmp) select.append(", ");
             for (Predicate predicate : p.getPredicates()){
-                if (!predicate.getNeg() && predicate.getAtributes().contains(a)){
+                if (!predicate.getNeg() && predicate.containsA(a)){
                     select.append(predicate.getName());
                     select.append("_");
                     select.append(iS);
                     select.append(".");
-                    int tmpIndex = predicate.getAtributes().indexOf(a);
+                    int tmpIndex = predicate.indexOf(a);
                     select.append(tableHashMap.get(predicate.getName()).getColumn(tmpIndex));
                     break;
                 }
@@ -68,10 +68,53 @@ public class SQL {
         }
 
         //where lubi.s1 = navstivil.s2
+        where.append(" where ");
+        tmp = false;
 
+        for (Condition c : p.getConditions()){
+            if (tmp) where.append(" AND ");
+            where.append(c.toString());
+            tmp = true;
+        }
 
+        HashSet<String> used = new HashSet<>();
 
+        List<Predicate> tmpPredicates = p.getPredicates();
 
+        for (int i = 0; i < tmpPredicates.size(); i++){
+            List<Atribute> tmpAtributes = tmpPredicates.get(i).getAtributes();
+
+            for (int l = 0; l < tmpAtributes.size(); l++){
+                if (used.contains(tmpAtributes.get(l).getName())) continue;
+
+                for (int k = i + 1; k < tmpPredicates.size(); k++){
+
+                    if (tmpPredicates.get(k).containsA(tmpAtributes.get(l))){
+                        if (tmp) where.append(" AND ");
+                        where.append(tmpPredicates.get(i).getName());
+                        where.append("_");
+                        where.append(i + 1);
+                        where.append(".");
+                        where.append(tableHashMap.get(tmpPredicates.get(i).getName()).getColumn(l));
+                        where.append(" = ");
+                        where.append(tmpPredicates.get(k).getName());
+                        where.append("_");
+                        where.append(k + 1);
+                        where.append(".");
+                        //chcem zistit v ktorom stlpceku je moj hladany atribut
+                        int index = tmpPredicates.get(k).indexOf(tmpAtributes.get(l));
+                        where.append(tableHashMap.get(tmpPredicates.get(k).getName()).getColumn(index));
+                        tmp = true;
+                    }
+                }
+
+                used.add(tmpAtributes.get(l).getName());
+            }
+        }
+
+        select.append(from.toString());
+        select.append(where.toString());
+        select.append(";");
 
         return null;
 
